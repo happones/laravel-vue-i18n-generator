@@ -9,14 +9,14 @@ with your [vue](http://vuejs.org/) front-end, using [vue-i18n](https://github.co
 
 ## Install the package
 
-### For Laravel 10.x:
+### For Laravel 13.x:
 
 In your project:
 ```composer require happones/laravel-vue-i18n-generator --dev```
 
->By default, the Laravel application skeleton does not include the lang directory. If you would like to customize Laravel's language files, you may publish them via the lang:publish Artisan command. [Read more.](https://laravel.com/docs/10.x/localization)
+>By default, the Laravel application skeleton does not include the lang directory. If you would like to customize Laravel's language files, you may publish them via the lang:publish Artisan command. [Read more.](https://laravel.com/docs/13.x/localization)
 
-### For Laravel 9.x and above:
+### For Laravel 10.x - 12.x:
 
 In your project:
 ```composer require happones/laravel-vue-i18n-generator:0.1.47 --dev```
@@ -252,7 +252,7 @@ Vue template:
 
 - The generated file is an ES6 module.
 
-The more sophisticated pluralization localization as described [here](https://laravel.com/docs/5.5/localization#pluralization) is not supported since neither vue-i18n or vuex-i18n support this.
+Basic pluralization is supported by stripping Laravel tags (`{0}`, `[1,10]`, etc.), making it compatible with [vue-i18n](https://vue-i18n.intlify.dev/guide/essentials/pluralization). More sophisticated pluralization localization as described [here](https://laravel.com/docs/master/localization#pluralization) may still require custom pluralization rules in your Vue application.
 
 # License
 

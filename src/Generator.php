@@ -329,6 +329,10 @@ class Generator
             return $s;
         }
 
+        if ($this->config['i18nLib'] === self::VUE_I18N || $this->config['i18nLib'] === self::VUEX_I18N) {
+            $s = $this->stripLaravelPluralTags($s);
+        }
+
         if ($this->config['i18nLib'] === self::VUEX_I18N) {
             $searchPipePattern = '/(\s)*(\|)(\s)*/';
             $threeColons = ' ::: ';
@@ -343,6 +347,26 @@ class Generator
             },
             $s
         );
+    }
+
+    /**
+     * Strips Laravel pluralization tags from the string.
+     *
+     * @param string $s
+     * @return string
+     */
+    private function stripLaravelPluralTags($s)
+    {
+        if (strpos($s, '|') === false) {
+            return $s;
+        }
+
+        $parts = explode('|', $s);
+        $res = [];
+        foreach ($parts as $part) {
+            $res[] = preg_replace('/^\s*(?:\{(?:\d+)\}|[\[\]](?:-?\d+|Inf)\s*,\s*(?:-?\d+|Inf)[\[\]])\s*/', '', $part);
+        }
+        return implode('|', $res);
     }
 
     /**

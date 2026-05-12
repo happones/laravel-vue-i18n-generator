@@ -2,6 +2,11 @@
 
 All changes will be documented in this file
 
+## 2026-05-11
+
+-   Support for Laravel 13, update dependencies php 8.3 min required
+-   Full pluralization support by stripping Laravel tags ({0}, [n,m]), compatible with vue-i18n.
+
 ## 2025-03-05
 
 -   Support for Laravel 12, update dependencies php 8.1 min required

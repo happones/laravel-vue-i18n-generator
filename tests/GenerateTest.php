@@ -99,7 +99,7 @@ class GenerateTest extends \PHPUnit\Framework\TestCase
         $this->destroyLocaleFilesFrom($arr, $root);
     }
 
-    function testBasicES6Format()
+    function testBasicES6Format(): void
     {
         $format = 'es6';
 
@@ -138,7 +138,7 @@ class GenerateTest extends \PHPUnit\Framework\TestCase
         $this->destroyLocaleFilesFrom($arr, $root);
     }
 
-    function testBasicWithUMDFormat()
+    function testBasicWithUMDFormat(): void
     {
         $format = 'umd';
         $arr = [
@@ -183,7 +183,7 @@ class GenerateTest extends \PHPUnit\Framework\TestCase
         $this->destroyLocaleFilesFrom($arr, $root);
     }
 
-    function testBasicWithJSONFormat()
+    function testBasicWithJSONFormat(): void
     {
         $format = 'json';
         $arr = [
@@ -240,7 +240,7 @@ class GenerateTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(true);
     }
 
-    function testBasicWithTranslationString()
+    function testBasicWithTranslationString(): void
     {
         $arr = [
             'en' => [
@@ -263,7 +263,7 @@ class GenerateTest extends \PHPUnit\Framework\TestCase
         $this->destroyLocaleFilesFrom($arr, $root);
     }
 
-    function testBasicWithEscapedTranslationString()
+    function testBasicWithEscapedTranslationString(): void
     {
         $arr = [
             'en' => [
@@ -288,7 +288,7 @@ class GenerateTest extends \PHPUnit\Framework\TestCase
         $this->destroyLocaleFilesFrom($arr, $root);
     }
 
-    function testBasicWithVendor()
+    function testBasicWithVendor(): void
     {
         $arr = [
             'en' => [
@@ -355,7 +355,7 @@ class GenerateTest extends \PHPUnit\Framework\TestCase
         $this->destroyLocaleFilesFrom($arr, $root);
     }
 
-    function testBasicWithVuexLib()
+    function testBasicWithVuexLib(): void
     {
         $arr = [
             'en' => [
@@ -394,7 +394,7 @@ class GenerateTest extends \PHPUnit\Framework\TestCase
         $this->destroyLocaleFilesFrom($arr, $root);
     }
 
-    function testNamed()
+    function testNamed(): void
     {
         $arr = [
             'en' => [
@@ -425,7 +425,7 @@ class GenerateTest extends \PHPUnit\Framework\TestCase
         $this->destroyLocaleFilesFrom($arr, $root);
     }
 
-    function testNamedWithEscaped()
+    function testNamedWithEscaped(): void
     {
         $arr = [
             'en' => [
@@ -456,7 +456,7 @@ class GenerateTest extends \PHPUnit\Framework\TestCase
         $this->destroyLocaleFilesFrom($arr, $root);
     }
 
-    function testEscapedEscapeCharacter()
+    function testEscapedEscapeCharacter(): void
     {
         $arr = [
             'en' => [
@@ -481,7 +481,7 @@ class GenerateTest extends \PHPUnit\Framework\TestCase
         $this->destroyLocaleFilesFrom($arr, $root);
     }
 
-    function testShouldNotTouchHtmlTags()
+    function testShouldNotTouchHtmlTags(): void
     {
         $arr = [
             'en' => [
@@ -510,7 +510,7 @@ class GenerateTest extends \PHPUnit\Framework\TestCase
         $this->destroyLocaleFilesFrom($arr, $root);
     }
 
-    function testPluralization()
+    function testPluralization(): void
     {
         $arr = [
             'en' => [
@@ -558,6 +558,35 @@ class GenerateTest extends \PHPUnit\Framework\TestCase
             . '    }' . PHP_EOL
             . '}' . PHP_EOL,
             (new Generator(['i18nLib' => 'vuex-i18n']))->generateFromPath($root));
+
+        $this->destroyLocaleFilesFrom($arr, $root);
+    }
+
+    function testFullPluralization(): void
+    {
+        $arr = [
+            'en' => [
+                'plural' => [
+                    'complex' => '{0} No apples|{1} One apple|[2,Inf] :count apples',
+                    'range' => '[1,19] There are some|[20,Inf] There are many',
+                    'mixed' => '{0} None|One apple|Many apples',
+                ]
+            ]
+        ];
+
+        $root = $this->generateLocaleFilesFrom($arr);
+
+        $this->assertEquals(
+            'export default {' . PHP_EOL
+            . '    "en": {' . PHP_EOL
+            . '        "plural": {' . PHP_EOL
+            . '            "complex": "No apples|One apple|{count} apples",' . PHP_EOL
+            . '            "range": "There are some|There are many",' . PHP_EOL
+            . '            "mixed": "None|One apple|Many apples"' . PHP_EOL
+            . '        }' . PHP_EOL
+            . '    }' . PHP_EOL
+            . '}' . PHP_EOL,
+            (new Generator(['i18nLib' => 'vue-i18n']))->generateFromPath($root));
 
         $this->destroyLocaleFilesFrom($arr, $root);
     }
