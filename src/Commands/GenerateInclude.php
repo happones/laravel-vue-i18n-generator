@@ -13,14 +13,14 @@ class GenerateInclude extends Command
      *
      * @var string
      */
-    protected $signature = 'vue-i18n:generate {--umd} {--multi} {--with-vendor} {--file-name=} {--lang-files=} {--format=es6} {--multi-locales}';
+    protected $signature = 'vue-i18n:generate {--umd} {--multi} {--with-vendor} {--file-name=} {--lang-files=} {--format=ts} {--multi-locales}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = "Generates a vue-i18n|vuex-i18n compatible js array out of project translations";
+    protected $description = "Generates a vue-i18n|vuex-i18n compatible js/ts array/object out of project translations";
 
     /**
      * Execute the console command.
@@ -70,6 +70,18 @@ class GenerateInclude extends Command
 
 
         $jsFile = $this->getFileName($fileName);
+
+        if (!isset($fileName)) {
+            $ext = 'ts';
+            if ($format === 'es6' || $format === 'umd') {
+                $ext = 'js';
+            } elseif ($format === 'json') {
+                $ext = 'json';
+            }
+            $pathInfo = pathinfo($jsFile);
+            $jsFile = $pathInfo['dirname'] . DIRECTORY_SEPARATOR . $pathInfo['filename'] . '.' . $ext;
+        }
+
         file_put_contents($jsFile, $data);
 
         if ($config['showOutputMessages']) {
@@ -96,7 +108,7 @@ class GenerateInclude extends Command
      */
     private function isValidFormat($format)
     {
-        $supportedFormats = ['es6', 'umd', 'json'];
+        $supportedFormats = ['ts', 'es6', 'umd', 'json'];
         return in_array($format, $supportedFormats);
     }
 }

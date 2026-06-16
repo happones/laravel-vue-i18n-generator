@@ -2,6 +2,12 @@
 
 use Happones\VueInternationalizationGenerator\Generator;
 
+if (!function_exists('base_path')) {
+    function base_path() {
+        return sys_get_temp_dir();
+    }
+}
+
 class GenerateTest extends \PHPUnit\Framework\TestCase
 {
     /**
@@ -94,7 +100,7 @@ class GenerateTest extends \PHPUnit\Framework\TestCase
             . '            "no": "nej"' . PHP_EOL
             . '        }' . PHP_EOL
             . '    }' . PHP_EOL
-            . '}' . PHP_EOL,
+            . '} as const;' . PHP_EOL,
             (new Generator([]))->generateFromPath($root));
         $this->destroyLocaleFilesFrom($arr, $root);
     }
@@ -134,6 +140,45 @@ class GenerateTest extends \PHPUnit\Framework\TestCase
             . '        }' . PHP_EOL
             . '    }' . PHP_EOL
             . '}' . PHP_EOL,
+            (new Generator([]))->generateFromPath($root, $format));
+        $this->destroyLocaleFilesFrom($arr, $root);
+    }
+
+    function testBasicTSFormat(): void
+    {
+        $format = 'ts';
+
+        $arr = [
+            'en' => [
+                'help' => [
+                    'yes' => 'yes',
+                    'no' => 'no',
+                ]
+            ],
+            'sv' => [
+                'help' => [
+                    'yes' => 'ja',
+                    'no' => 'nej',
+                ]
+            ]
+        ];
+
+        $root = $this->generateLocaleFilesFrom($arr);
+        $this->assertEquals(
+            'export default {' . PHP_EOL
+            . '    "en": {' . PHP_EOL
+            . '        "help": {' . PHP_EOL
+            . '            "yes": "yes",' . PHP_EOL
+            . '            "no": "no"' . PHP_EOL
+            . '        }' . PHP_EOL
+            . '    },' . PHP_EOL
+            . '    "sv": {' . PHP_EOL
+            . '        "help": {' . PHP_EOL
+            . '            "yes": "ja",' . PHP_EOL
+            . '            "no": "nej"' . PHP_EOL
+            . '        }' . PHP_EOL
+            . '    }' . PHP_EOL
+            . '} as const;' . PHP_EOL,
             (new Generator([]))->generateFromPath($root, $format));
         $this->destroyLocaleFilesFrom($arr, $root);
     }
@@ -258,7 +303,7 @@ class GenerateTest extends \PHPUnit\Framework\TestCase
             . '            "hello {name}": "Hello {name}"' . PHP_EOL
             . '        }' . PHP_EOL
             . '    }' . PHP_EOL
-            . '}' . PHP_EOL,
+            . '} as const;' . PHP_EOL,
             (new Generator([]))->generateFromPath($root));
         $this->destroyLocaleFilesFrom($arr, $root);
     }
@@ -283,7 +328,7 @@ class GenerateTest extends \PHPUnit\Framework\TestCase
             . '            "time test 10:00": "Time test 10:00"' . PHP_EOL
             . '        }' . PHP_EOL
             . '    }' . PHP_EOL
-            . '}' . PHP_EOL,
+            . '} as const;' . PHP_EOL,
             (new Generator([]))->generateFromPath($root));
         $this->destroyLocaleFilesFrom($arr, $root);
     }
@@ -388,7 +433,7 @@ class GenerateTest extends \PHPUnit\Framework\TestCase
             . '            "no": "nej"' . PHP_EOL
             . '        }' . PHP_EOL
             . '    }' . PHP_EOL
-            . '}' . PHP_EOL,
+            . '} as const;' . PHP_EOL,
             (new Generator([]))->generateFromPath($root));
 
         $this->destroyLocaleFilesFrom($arr, $root);
@@ -419,7 +464,7 @@ class GenerateTest extends \PHPUnit\Framework\TestCase
             . '            }' . PHP_EOL
             . '        }' . PHP_EOL
             . '    }' . PHP_EOL
-            . '}' . PHP_EOL,
+            . '} as const;' . PHP_EOL,
             (new Generator([]))->generateFromPath($root));
 
         $this->destroyLocaleFilesFrom($arr, $root);
@@ -450,7 +495,7 @@ class GenerateTest extends \PHPUnit\Framework\TestCase
             . '            }' . PHP_EOL
             . '        }' . PHP_EOL
             . '    }' . PHP_EOL
-            . '}' . PHP_EOL,
+            . '} as const;' . PHP_EOL,
             (new Generator([]))->generateFromPath($root));
 
         $this->destroyLocaleFilesFrom($arr, $root);
@@ -475,7 +520,7 @@ class GenerateTest extends \PHPUnit\Framework\TestCase
             . '            "test escaped": "escaped escape char not !:touched"' . PHP_EOL
             . '        }' . PHP_EOL
             . '    }' . PHP_EOL
-            . '}' . PHP_EOL,
+            . '} as const;' . PHP_EOL,
             (new Generator([]))->generateFromPath($root));
 
         $this->destroyLocaleFilesFrom($arr, $root);
@@ -504,7 +549,7 @@ class GenerateTest extends \PHPUnit\Framework\TestCase
             . '            "maybe": "It is a <strong>Test</strong> ok!"' . PHP_EOL
             . '        }' . PHP_EOL
             . '    }' . PHP_EOL
-            . '}' . PHP_EOL,
+            . '} as const;' . PHP_EOL,
             (new Generator([]))->generateFromPath($root));
 
         $this->destroyLocaleFilesFrom($arr, $root);
@@ -540,7 +585,7 @@ class GenerateTest extends \PHPUnit\Framework\TestCase
             . '            }' . PHP_EOL
             . '        }' . PHP_EOL
             . '    }' . PHP_EOL
-            . '}' . PHP_EOL,
+            . '} as const;' . PHP_EOL,
             (new Generator(['i18nLib' => 'vue-i18n']))->generateFromPath($root));
 
         // vuex-i18n
@@ -556,7 +601,7 @@ class GenerateTest extends \PHPUnit\Framework\TestCase
             . '            }' . PHP_EOL
             . '        }' . PHP_EOL
             . '    }' . PHP_EOL
-            . '}' . PHP_EOL,
+            . '} as const;' . PHP_EOL,
             (new Generator(['i18nLib' => 'vuex-i18n']))->generateFromPath($root));
 
         $this->destroyLocaleFilesFrom($arr, $root);
@@ -585,9 +630,71 @@ class GenerateTest extends \PHPUnit\Framework\TestCase
             . '            "mixed": "None|One apple|Many apples"' . PHP_EOL
             . '        }' . PHP_EOL
             . '    }' . PHP_EOL
-            . '}' . PHP_EOL,
+            . '} as const;' . PHP_EOL,
             (new Generator(['i18nLib' => 'vue-i18n']))->generateFromPath($root));
 
+        $this->destroyLocaleFilesFrom($arr, $root);
+    }
+
+    function testGenerateMultiple(): void
+    {
+        $arr = [
+            'en' => [
+                'help' => [
+                    'yes' => 'yes',
+                    'no' => 'no',
+                ]
+            ],
+            'sv' => [
+                'help' => [
+                    'yes' => 'ja',
+                    'no' => 'nej',
+                ]
+            ]
+        ];
+
+        $root = $this->generateLocaleFilesFrom($arr);
+        $tempOutDir = sys_get_temp_dir() . '/' . sha1(microtime(true) . mt_rand()) . '/';
+        mkdir($tempOutDir, 0777, true);
+
+        // Remove the base_path() prefix if it's there
+        $jsPath = str_replace(sys_get_temp_dir(), '', $tempOutDir);
+
+        $generator = new Generator([
+            'jsPath' => $jsPath,
+            'langPath' => str_replace(sys_get_temp_dir(), '', $root),
+            'excludes' => []
+        ]);
+
+        $createdFiles = $generator->generateMultiple($root, 'ts');
+
+        // Check if correct file is created
+        $expectedEnFile = $tempOutDir . 'help.ts';
+        $this->assertTrue(file_exists($expectedEnFile));
+
+        $enContent = file_get_contents($expectedEnFile);
+        $this->assertStringContainsString('export default {', $enContent);
+        $this->assertStringContainsString('"yes": "yes"', $enContent);
+        $this->assertStringContainsString('} as const;', $enContent);
+
+        // Check with ES6 format
+        $generatorEs6 = new Generator([
+            'jsPath' => $jsPath,
+            'langPath' => str_replace(sys_get_temp_dir(), '', $root),
+            'excludes' => []
+        ]);
+        $createdFilesEs6 = $generatorEs6->generateMultiple($root, 'es6');
+        $expectedEnFileEs6 = $tempOutDir . 'help.js';
+        $this->assertTrue(file_exists($expectedEnFileEs6));
+
+        $enContentEs6 = file_get_contents($expectedEnFileEs6);
+        $this->assertStringContainsString('export default {', $enContentEs6);
+        $this->assertStringNotContainsString('} as const;', $enContentEs6);
+
+        // Cleanup
+        unlink($expectedEnFile);
+        unlink($expectedEnFileEs6);
+        rmdir($tempOutDir);
         $this->destroyLocaleFilesFrom($arr, $root);
     }
 }

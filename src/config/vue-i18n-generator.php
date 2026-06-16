@@ -51,12 +51,12 @@ return [
     | Output file
     |--------------------------------------------------------------------------
     |
-    | The javascript path where I will place the generated file.
+    | The javascript/typescript path where I will place the generated file.
     | Note: the path will be prepended to point to the App directory.
     |
     */
     'jsPath' => '/resources/js/locales/',
-    'jsFile' => '/resources/js/vue-i18n-locales.js',
+    'jsFile' => '/resources/js/vue-i18n-locales.ts',
 
     /*
     |--------------------------------------------------------------------------

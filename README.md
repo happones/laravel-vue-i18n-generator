@@ -59,7 +59,7 @@ Assuming you are using a recent version of vue-i18n (>=6.x), adjust your vue app
 ```js
 import Vue from 'vue';
 import VueInternationalization from 'vue-i18n';
-import Locale from './vue-i18n-locales.generated';
+import Locale from './vue-i18n-locales';
 
 Vue.use(VueInternationalization);
 
@@ -109,7 +109,7 @@ For older vue-i18n (5.x), the initialization looks something like:
 ```js
 import Vue from 'vue';
 import VueInternationalization from 'vue-i18n';
-import Locales from './vue-i18n-locales.generated.js';
+import Locales from './vue-i18n-locales.js';
 
 Vue.use(VueInternationalization);
 
@@ -152,7 +152,7 @@ Assuming you are using a recent version of vuex-i18n, adjust your vue app with s
 ```js
 import Vuex from 'vuex';
 import vuexI18n from 'vuex-i18n';
-import Locales from './vue-i18n-locales.generated.js';
+import Locales from './vue-i18n-locales.js';
 
 const store = new Vuex.Store();
 
@@ -174,10 +174,10 @@ var app = new Vue({
 
 ## Output Formats
 
-You can specify the output formats from `es6`, `umd`, or `json` with the `--format` option. (defaults to `es6`)
+You can specify the output formats from `ts`, `es6`, `umd`, or `json` with the `--format` option. (defaults to `ts`)
 
 ```
-php artisan vue-i18n:generate --format {es6,umd,json}
+php artisan vue-i18n:generate --format {ts,es6,umd,json}
 ```
 
 ### Use case example for UMD module
@@ -189,7 +189,7 @@ An UMD module can be imported into the browser, build system, node and etc.
 
 Now you can include the generated script in the browser as a normal script and reference it with window.vuei18nLocales.
 ```vue
-<script src="{{ asset('js/vue-i18n-locales.generated.js') }}"></script>
+<script src="{{ asset('js/vue-i18n-locales.js') }}"></script>
 
 // in your js
 Vue.use(VueI18n)
@@ -226,7 +226,7 @@ return [
 ];
 ```
 
-in vue-i18n-locales.generated.js:
+in vue-i18n-locales.ts:
 ```js
 ...
     "hello": "Hello {name}",
@@ -250,7 +250,7 @@ Vue template:
 
 ## Notices
 
-- The generated file is an ES6 module.
+- The generated file is a TypeScript module by default.
 
 Basic pluralization is supported by stripping Laravel tags (`{0}`, `[1,10]`, etc.), making it compatible with [vue-i18n](https://vue-i18n.intlify.dev/guide/essentials/pluralization). More sophisticated pluralization localization as described [here](https://laravel.com/docs/master/localization#pluralization) may still require custom pluralization rules in your Vue application.
 

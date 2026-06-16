@@ -45,7 +45,7 @@ class Generator
      * @return string
      * @throws Exception
      */
-    public function generateFromPath($path, $format = 'es6', $withVendor = false, $langFiles = [])
+    public function generateFromPath($path, $format = 'ts', $withVendor = false, $langFiles = [])
     {
         if (!is_dir($path)) {
             throw new Exception('Directory not found: ' . $path);
@@ -103,7 +103,9 @@ class Generator
         }
 
         // formats other than 'es6' and 'umd' will become plain JSON
-        if ($format === 'es6') {
+        if ($format === 'ts') {
+            $jsBody = $this->getTSModule($jsonLocales);
+        } elseif ($format === 'es6') {
             $jsBody = $this->getES6Module($jsonLocales);
         } elseif ($format === 'umd') {
             $jsBody = $this->getUMDModule($jsonLocales);
@@ -120,7 +122,7 @@ class Generator
      * @return string
      * @throws Exception
      */
-    public function generateMultiple($path, $format = 'es6', $multiLocales = false)
+    public function generateMultiple($path, $format = 'ts', $multiLocales = false)
     {
         if (!is_dir($path)) {
             throw new Exception('Directory not found: ' . $path);
@@ -160,13 +162,21 @@ class Generator
             }
         }
         foreach ($this->filesToCreate as $fileName => $data) {
-            $fileToCreate = $jsPath . $fileName . '.js';
+            $ext = 'ts';
+            if ($format === 'es6' || $format === 'umd') {
+                $ext = 'js';
+            } elseif ($format === 'json') {
+                $ext = 'json';
+            }
+            $fileToCreate = $jsPath . $fileName . '.' . $ext;
             $createdFiles .= $fileToCreate . PHP_EOL;
             $jsonLocales = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . PHP_EOL;
             if (json_last_error() !== JSON_ERROR_NONE) {
                 throw new Exception('Could not generate JSON, error code '.json_last_error());
             }
-            if ($format === 'es6') {
+            if ($format === 'ts') {
+                $jsBody = $this->getTSModule($jsonLocales);
+            } elseif ($format === 'es6') {
                 $jsBody = $this->getES6Module($jsonLocales);
             } elseif ($format === 'umd') {
                 $jsBody = $this->getUMDModule($jsonLocales);
@@ -430,5 +440,15 @@ HEREDOC;
     private function getES6Module($body)
     {
         return "export default {$body}";
+    }
+
+    /**
+     * Returns a TS style module
+     * @param string $body
+     * @return string
+     */
+    private function getTSModule($body)
+    {
+        return "export default " . rtrim($body) . " as const;" . PHP_EOL;
     }
 }
