@@ -2,6 +2,10 @@
 
 All changes will be documented in this file
 
+## 2026-06-21
+
+-   Add command line progress, success, and detailed error messages.
+
 ## 2026-05-11
 
 -   Support for Laravel 13, update dependencies php 8.3 min required

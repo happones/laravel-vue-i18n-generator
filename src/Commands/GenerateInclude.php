@@ -29,63 +29,74 @@ class GenerateInclude extends Command
      */
     public function handle()
     {
-        $root = base_path() . config('vue-i18n-generator.langPath');
-        $config = config('vue-i18n-generator');
+        $this->comment("Generating language files...");
 
-        // options
-        $umd = $this->option('umd');
-        $multipleFiles = $this->option('multi');
-        $withVendor = $this->option('with-vendor');
-        $fileName = $this->option('file-name');
-        $langFiles = $this->option('lang-files');
-        $format = $this->option('format');
-        $multipleLocales = $this->option('multi-locales');
+        try {
+            $root = base_path() . config('vue-i18n-generator.langPath');
+            $config = config('vue-i18n-generator');
 
-        if ($umd) {
-            // if the --umd option is set, set the $format to 'umd'
-            $format = 'umd';
-        }
+            // options
+            $umd = $this->option('umd');
+            $multipleFiles = $this->option('multi');
+            $withVendor = $this->option('with-vendor');
+            $fileName = $this->option('file-name');
+            $langFiles = $this->option('lang-files');
+            $format = $this->option('format');
+            $multipleLocales = $this->option('multi-locales');
 
-        if (!$this->isValidFormat($format)) {
-            throw new \RuntimeException('Invalid format passed: ' . $format);
-        }
+            if ($umd) {
+                // if the --umd option is set, set the $format to 'umd'
+                $format = 'umd';
+            }
 
-        if ($multipleFiles || $multipleLocales) {
-            $files = (new Generator($config))
-                ->generateMultiple($root, $format, $multipleLocales);
+            if (!$this->isValidFormat($format)) {
+                throw new \RuntimeException('Invalid format passed: ' . $format);
+            }
+
+            if ($multipleFiles || $multipleLocales) {
+                $files = (new Generator($config))
+                    ->generateMultiple($root, $format, $multipleLocales);
+
+                if ($config['showOutputMessages']) {
+                    $this->info("Written to : " . $files);
+                }
+
+                $this->info("Success! Generated lang files.");
+                return 0;
+            }
+
+            if ($langFiles) {
+                $langFiles = explode(',', $langFiles);
+            }
+
+            $data = (new Generator($config))
+                ->generateFromPath($root, $format, $withVendor, $langFiles);
+
+
+            $jsFile = $this->getFileName($fileName);
+
+            if (!isset($fileName)) {
+                $ext = 'ts';
+                if ($format === 'es6' || $format === 'umd') {
+                    $ext = 'js';
+                } elseif ($format === 'json') {
+                    $ext = 'json';
+                }
+                $pathInfo = pathinfo($jsFile);
+                $jsFile = $pathInfo['dirname'] . DIRECTORY_SEPARATOR . $pathInfo['filename'] . '.' . $ext;
+            }
+
+            file_put_contents($jsFile, $data);
 
             if ($config['showOutputMessages']) {
-                $this->info("Written to : " . $files);
+                $this->info("Written to : " . $jsFile);
             }
 
-            return;
-        }
-
-        if ($langFiles) {
-            $langFiles = explode(',', $langFiles);
-        }
-
-        $data = (new Generator($config))
-            ->generateFromPath($root, $format, $withVendor, $langFiles);
-
-
-        $jsFile = $this->getFileName($fileName);
-
-        if (!isset($fileName)) {
-            $ext = 'ts';
-            if ($format === 'es6' || $format === 'umd') {
-                $ext = 'js';
-            } elseif ($format === 'json') {
-                $ext = 'json';
-            }
-            $pathInfo = pathinfo($jsFile);
-            $jsFile = $pathInfo['dirname'] . DIRECTORY_SEPARATOR . $pathInfo['filename'] . '.' . $ext;
-        }
-
-        file_put_contents($jsFile, $data);
-
-        if ($config['showOutputMessages']) {
-            $this->info("Written to : " . $jsFile);
+            $this->info("Success! Generated lang files.");
+            return 0;
+        } catch (\Exception $e) {
+            $this->error("Error: Failed to generate language files. Reason: " . $e->getMessage());
+            return 1;
         }
     }
 
