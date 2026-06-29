@@ -544,7 +544,7 @@ class GenerateTest extends \PHPUnit\Framework\TestCase
             'export default {' . PHP_EOL
             . '    "en": {' . PHP_EOL
             . '        "help": {' . PHP_EOL
-            . '            "yes": "see <a href=\"mailto:mail@com\">",' . PHP_EOL
+            . '            "yes": "see <a href=\"mailto:mail\\\\@com\">",' . PHP_EOL
             . '            "no": "see <a href=\"{link}\">",' . PHP_EOL
             . '            "maybe": "It is a <strong>Test</strong> ok!"' . PHP_EOL
             . '        }' . PHP_EOL
@@ -554,6 +554,40 @@ class GenerateTest extends \PHPUnit\Framework\TestCase
 
         $this->destroyLocaleFilesFrom($arr, $root);
     }
+
+    function testShouldEscapeAtSymbol(): void
+    {
+        $arr = [
+            'en' => [
+                'help' => [
+                    'email' => 'Contact us at example@domain.com',
+                    'handle' => 'Follow me @happones',
+                    'linked' => 'Go to @:home.title',
+                    'linked_mod' => 'Go to @.lower:home.title',
+                    'already_escaped' => 'Already \\@escaped',
+                ]
+            ]
+        ];
+
+        $root = $this->generateLocaleFilesFrom($arr);
+
+        $this->assertEquals(
+            'export default {' . PHP_EOL
+            . '    "en": {' . PHP_EOL
+            . '        "help": {' . PHP_EOL
+            . '            "email": "Contact us at example\\\\@domain.com",' . PHP_EOL
+            . '            "handle": "Follow me \\\\@happones",' . PHP_EOL
+            . '            "linked": "Go to @:home.title",' . PHP_EOL
+            . '            "linked_mod": "Go to @.lower:home.title",' . PHP_EOL
+            . '            "already_escaped": "Already \\\\@escaped"' . PHP_EOL
+            . '        }' . PHP_EOL
+            . '    }' . PHP_EOL
+            . '} as const;' . PHP_EOL,
+            (new Generator([]))->generateFromPath($root));
+
+        $this->destroyLocaleFilesFrom($arr, $root);
+    }
+
 
     function testPluralization(): void
     {

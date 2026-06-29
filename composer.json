@@ -7,6 +7,24 @@
         "vue-i18n"
     ],
     "homepage": "http://github.com/happones/laravel-vue-i18n-generator",
+    "funding": [
+        {
+            "type": "github",
+            "url": "https://github.com/happones"
+        },
+        {
+            "type": "patreon",
+            "url": "https://www.patreon.com/happones"
+        },
+        {
+            "type": "ko-fi",
+            "url": "https://ko-fi.com/happones"
+        },
+        {
+            "type": "custom",
+            "url": "https://www.buymeacoffee.com/happones"
+        }
+    ],
     "authors": [
         {
             "name": "Omar Hernandez",

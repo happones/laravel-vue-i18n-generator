@@ -2,6 +2,10 @@
 
 All changes will be documented in this file
 
+## 2026-06-28
+
+-   Escape literal `@` characters (such as in emails and handles) to prevent compiler errors in `vue-i18n`, while preserving valid linked messages.
+
 ## 2026-06-21
 
 -   Add command line progress, success, and detailed error messages.

@@ -350,13 +350,26 @@ class Generator
         }
 
         $escaped_escape_char = preg_quote($this->config['escape_char'], '/');
-        return preg_replace_callback(
-            "/(?<!mailto|tel|{$escaped_escape_char}):\w+/",
+        // Match either a vue-i18n linked message or a Laravel placeholder
+        $s = preg_replace_callback(
+            "/(?<!mailto|tel|{$escaped_escape_char}):\w+|@(?:\.\w+)*:\w+/",
             function ($matches) {
-                return '{' . mb_substr($matches[0], 1) . '}';
+                $match = $matches[0];
+                if ($match[0] === '@') {
+                    // It is a linked message (e.g. @:home or @.lower:home), return it unchanged
+                    return $match;
+                }
+                // It is a placeholder (e.g. :name), convert it to {name}
+                return '{' . mb_substr($match, 1) . '}';
             },
             $s
         );
+
+        if ($this->config['i18nLib'] === self::VUE_I18N) {
+            $s = preg_replace('/(?<!\\\\)@(?!(?:\.\w+)*:)/', '\\@', $s);
+        }
+
+        return $s;
     }
 
     /**
