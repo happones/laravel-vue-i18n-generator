@@ -5,15 +5,14 @@ os:
   - linux
 
 php:
-  - 7.2
-  - 7.4
-  - 8.1
+  - 8.3
+  - 8.4
 
 script:
-  - vendor/phpunit/phpunit/phpunit
+  - ./vendor/bin/phpunit
 
 before_install:
   - composer self-update
 
 install:
-  - composer install
+  - composer install --prefer-dist --no-interaction
