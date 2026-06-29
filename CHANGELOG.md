@@ -2,7 +2,13 @@
 
 All changes will be documented in this file
 
-## 2026-06-28
+## 2026-06-28 - v1.2.2
+
+-   Migrate from Travis CI to GitHub Actions (tests and automatic releases).
+-   Remove `.travis.yml`.
+-   Update CI status badge in `README.md`.
+
+## 2026-06-28 - v1.2.1
 
 -   Escape literal `@` characters (such as in emails and handles) to prevent compiler errors in `vue-i18n`, while preserving valid linked messages.
 
