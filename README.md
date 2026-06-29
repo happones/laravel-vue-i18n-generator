@@ -1,7 +1,7 @@
 ## About
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/happones/laravel-vue-i18n-generator.svg?style=flat-square)](https://packagist.org/packages/happones/laravel-vue-i18n-generator)
-[![Build Status](https://travis-ci.org/happones/laravel-vue-i18n-generator.png?branch=master)](https://travis-ci.org/happones/laravel-vue-i18n-generator)
+[![Run Tests](https://github.com/happones/laravel-vue-i18n-generator/actions/workflows/run-tests.yml/badge.svg)](https://github.com/happones/laravel-vue-i18n-generator/actions/workflows/run-tests.yml)
 [![Total Downloads](https://img.shields.io/packagist/dt/happones/laravel-vue-i18n-generator.svg?style=flat-square)](https://packagist.org/packages/happones/laravel-vue-i18n-generator)
 
 Laravel 6 package that allows you to share your [Laravel localizations](https://laravel.com/docs/5.8/localization)
