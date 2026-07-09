@@ -731,4 +731,59 @@ class GenerateTest extends \PHPUnit\Framework\TestCase
         rmdir($tempOutDir);
         $this->destroyLocaleFilesFrom($arr, $root);
     }
+
+    function testGenerateMultipleLocalesWithDirectoryAndJsonMix(): void
+    {
+        $root = sys_get_temp_dir() . '/' . sha1(microtime(true) . mt_rand());
+        mkdir($root, 0777, true);
+
+        // Create 'en' folder and en/auth.php
+        mkdir($root . '/en');
+        file_put_contents($root . '/en/auth.php', '<?php return ["login" => "Login"];');
+
+        // Create 'es.json' file (to trigger ordering/already-added checks)
+        file_put_contents($root . '/es.json', '{"welcome": "Bienvenido"}');
+
+        // Create 'es' folder and es/auth.php
+        mkdir($root . '/es');
+        file_put_contents($root . '/es/auth.php', '<?php return ["login" => "Iniciar sesión"];');
+
+        $tempOutDir = sys_get_temp_dir() . '/' . sha1(microtime(true) . mt_rand()) . '/';
+        mkdir($tempOutDir, 0777, true);
+
+        $jsPath = str_replace(sys_get_temp_dir(), '', $tempOutDir);
+
+        $generator = new Generator([
+            'jsPath' => $jsPath,
+            'langPath' => str_replace(sys_get_temp_dir(), '', $root),
+            'excludes' => []
+        ]);
+
+        $generator->generateMultiple($root, 'ts', true);
+
+        $expectedEsFile = $tempOutDir . 'es.ts';
+        $expectedEnFile = $tempOutDir . 'en.ts';
+
+        $this->assertTrue(file_exists($expectedEsFile), 'Spanish translations file should be generated');
+        $this->assertTrue(file_exists($expectedEnFile), 'English translations file should be generated');
+
+        $esContent = file_get_contents($expectedEsFile);
+        $enContent = file_get_contents($expectedEnFile);
+
+        $this->assertStringContainsString('"login": "Iniciar sesión"', $esContent);
+        $this->assertStringContainsString('"login": "Login"', $enContent);
+        $this->assertStringNotContainsString('"login": "Iniciar sesión"', $enContent);
+
+        // Cleanup
+        unlink($root . '/en/auth.php');
+        rmdir($root . '/en');
+        unlink($root . '/es/auth.php');
+        rmdir($root . '/es');
+        unlink($root . '/es.json');
+        rmdir($root);
+
+        unlink($expectedEsFile);
+        unlink($expectedEnFile);
+        rmdir($tempOutDir);
+    }
 }

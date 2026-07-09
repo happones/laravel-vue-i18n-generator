@@ -2,6 +2,10 @@
 
 All changes will be documented in this file
 
+## 2026-07-08 - v1.2.3
+
+-   Fix locale resolution bug in `generateMultiple` when mixing JSON files and directories.
+
 ## 2026-06-28 - v1.2.2
 
 -   Migrate from Travis CI to GitHub Actions (tests and automatic releases).

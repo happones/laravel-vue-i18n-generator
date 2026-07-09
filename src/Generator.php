@@ -147,7 +147,7 @@ class Generator
                         $this->availableLocales[] = $noExt;
                     }
                     if ($fileinfo->isDir()) {
-                        $local = $this->allocateLocaleArray($fileinfo->getRealPath(), $multiLocales);
+                        $local = $this->allocateLocaleArray($fileinfo->getRealPath(), $multiLocales, $noExt);
                     } else {
                         $local = $this->allocateLocaleJSON($fileinfo->getRealPath());
                         if ($local === null) continue;
@@ -216,11 +216,11 @@ class Generator
      * @param string $path
      * @return array
      */
-    private function allocateLocaleArray($path, $multiLocales = false)
+    private function allocateLocaleArray($path, $multiLocales = false, $locale = null)
     {
         $data = [];
         $dir = new DirectoryIterator($path);
-        $lastLocale = last($this->availableLocales);
+        $lastLocale = $locale ?? last($this->availableLocales);
         foreach ($dir as $fileinfo) {
             // Do not mess with dotfiles at all.
             if ($fileinfo->isDot()) {
@@ -230,7 +230,7 @@ class Generator
             if ($fileinfo->isDir()) {
                 // Recursivley iterate through subdirs, until everything is allocated.
 
-                $data[$fileinfo->getFilename()] = $this->allocateLocaleArray($path . DIRECTORY_SEPARATOR . $fileinfo->getFilename());
+                $data[$fileinfo->getFilename()] = $this->allocateLocaleArray($path . DIRECTORY_SEPARATOR . $fileinfo->getFilename(), $multiLocales, $locale);
             } else {
                 $noExt = $this->removeExtension($fileinfo->getFilename());
                 $fileName = $path . DIRECTORY_SEPARATOR . $fileinfo->getFilename();
